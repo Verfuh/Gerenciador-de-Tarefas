@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .create-task-button {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .create-task-button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .status-Pendente {
+            color: #ffc107; /* Amarelo */
+        }
+
+        .status-Andamento {
+            color: #17a2b8; /* Ciano */
+        }
+
+        .status-Completo {
+            color: #28a745; /* Verde */
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        button a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form {
+            display: inline;
+        }
+
+        select {
+            padding: 5px;
+            margin-right: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tasks</h1>
+    <div class="container">
+        <a href="{{ url_for('create_task') }}" class="create-task-button">Criar Tarefa</a>
+        <table>
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in tasks %}
+            <tr>
+              <td>{{ task.title }}</td>
+              <td>{{ task.description }}</td>
+              <td class="status-{{ task.status }}">{{ task.status }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('update_task_status', task_id=task.id) }}">
+                  <select name="status">
+                    <option value="Pendente" {% if task.status == "pending" %}selected{% endif %}>Pendente</option>
+                    <option value="Andamento" {% if task.status == "in_progress" %}selected{% endif %}>Andamento</option>
+                    <option value="Completo" {% if task.status == "completed" %}selected{% endif %}>Completo</option>
+                  </select>
+                  <button type="submit">Atualizar</button>
+                </form>
+                <button><a href="{{ url_for('edit_task', task_id=task.id) }}">Editar</a></button>
+                <form method="POST" action="{{ url_for('delete_task', task_id=task.id) }}">
+                  <button type="submit">Excluir</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+    </div>
+</body>
+</html>
